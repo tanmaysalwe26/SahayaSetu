@@ -1,0 +1,28 @@
+# Node
+node_modules/
+dist/
+build/
+
+# Java
+target/
+*.class
+*.jar
+*.log
+
+# .NET
+bin/
+obj/
+.vs/
+*.user
+*.suo
+
+# Environment
+.env
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
