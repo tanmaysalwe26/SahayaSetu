@@ -3,6 +3,7 @@ package com.sahayaSetu.controllers;
 import com.sahayaSetu.dtos.DonationDto;
 import com.sahayaSetu.dtos.ResourceFulfillmentDto;
 import com.sahayaSetu.dtos.RequestResponseDto;
+import com.sahayaSetu.dtos.FundraiserRequestResponseDto;
 
 import com.sahayaSetu.services.DonorService;
 import jakarta.validation.Valid;
@@ -30,7 +31,7 @@ public class DonorController {
     }
 
     @GetMapping("/fundraisers")
-    public ResponseEntity<List<com.sahayaSetu.dtos.FundraiserRequestResponseDto>> getOpenFundraisers() {
+    public ResponseEntity<List<FundraiserRequestResponseDto>> getOpenFundraisers() {
         return ResponseEntity.ok(donorService.getOpenFundraisers());
     }
 

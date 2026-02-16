@@ -2,10 +2,19 @@ package com.sahayaSetu.services;
 
 import com.sahayaSetu.dtos.NgoResponseDto;
 import com.sahayaSetu.dtos.RequestResponseDto;
+import com.sahayaSetu.dtos.DonorResponseDto;
+import com.sahayaSetu.dtos.VolunteerRequestResponseDto;
+import com.sahayaSetu.dtos.ResourceRequestResponseDto;
+import com.sahayaSetu.dtos.FundraiserRequestResponseDto;
 import com.sahayaSetu.entities.Ngo;
+import com.sahayaSetu.entities.Request;
+import com.sahayaSetu.entities.VolunteerRequest;
+import com.sahayaSetu.entities.ResourceRequest;
+import com.sahayaSetu.entities.FundraiserRequest;
 import com.sahayaSetu.entities.enums.NgoStatus;
 import com.sahayaSetu.repositories.NgoRepository;
 import com.sahayaSetu.repositories.RequestRepository;
+import com.sahayaSetu.repositories.DonorRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,40 +49,36 @@ public class AdminService {
     }
 
     @Autowired
-    private com.sahayaSetu.repositories.DonorRepository donorRepository;
+    private DonorRepository donorRepository;
 
-    public List<com.sahayaSetu.dtos.DonorResponseDto> getAllDonors() {
+    public List<DonorResponseDto> getAllDonors() {
         return donorRepository.findAll().stream()
                 .map(donor -> {
-                    com.sahayaSetu.dtos.DonorResponseDto dto = modelMapper.map(donor,
-                            com.sahayaSetu.dtos.DonorResponseDto.class);
+                    DonorResponseDto dto = modelMapper.map(donor, DonorResponseDto.class);
                     dto.setEmail(donor.getUser().getEmail());
                     return dto;
                 })
                 .collect(Collectors.toList());
     }
 
-    private RequestResponseDto mapToDto(com.sahayaSetu.entities.Request request) {
-        if (request instanceof com.sahayaSetu.entities.VolunteerRequest) {
-            com.sahayaSetu.entities.VolunteerRequest vr = (com.sahayaSetu.entities.VolunteerRequest) request;
-            com.sahayaSetu.dtos.VolunteerRequestResponseDto dto = modelMapper.map(vr,
-                    com.sahayaSetu.dtos.VolunteerRequestResponseDto.class);
+    private RequestResponseDto mapToDto(Request request) {
+        if (request instanceof VolunteerRequest) {
+            VolunteerRequest vr = (VolunteerRequest) request;
+            VolunteerRequestResponseDto dto = modelMapper.map(vr, VolunteerRequestResponseDto.class);
             dto.setDescription(vr.getDescription());
             dto.setSkillsRequired(vr.getSkillsRequired());
             dto.setVolunteersRequired(vr.getVolunteersRequired());
             return dto;
-        } else if (request instanceof com.sahayaSetu.entities.ResourceRequest) {
-            com.sahayaSetu.entities.ResourceRequest rr = (com.sahayaSetu.entities.ResourceRequest) request;
-            com.sahayaSetu.dtos.ResourceRequestResponseDto dto = modelMapper.map(rr,
-                    com.sahayaSetu.dtos.ResourceRequestResponseDto.class);
+        } else if (request instanceof ResourceRequest) {
+            ResourceRequest rr = (ResourceRequest) request;
+            ResourceRequestResponseDto dto = modelMapper.map(rr, ResourceRequestResponseDto.class);
             dto.setResourceType(rr.getResourceType());
             dto.setQuantityRequired(rr.getQuantityRequired());
             dto.setQuantityReceived(rr.getQuantityReceived());
             return dto;
-        } else if (request instanceof com.sahayaSetu.entities.FundraiserRequest) {
-            com.sahayaSetu.entities.FundraiserRequest fr = (com.sahayaSetu.entities.FundraiserRequest) request;
-            com.sahayaSetu.dtos.FundraiserRequestResponseDto dto = modelMapper.map(fr,
-                    com.sahayaSetu.dtos.FundraiserRequestResponseDto.class);
+        } else if (request instanceof FundraiserRequest) {
+            FundraiserRequest fr = (FundraiserRequest) request;
+            FundraiserRequestResponseDto dto = modelMapper.map(fr, FundraiserRequestResponseDto.class);
             dto.setTargetAmount(fr.getTargetAmount());
             dto.setCollectedAmount(fr.getCollectedAmount());
             dto.setDeadline(fr.getDeadline());

@@ -2,6 +2,13 @@ package com.sahayaSetu.services;
 
 import com.sahayaSetu.dtos.DonationDto;
 import com.sahayaSetu.dtos.RequestResponseDto;
+import com.sahayaSetu.dtos.FundraiserRequestResponseDto;
+import com.sahayaSetu.dtos.ResourceRequestResponseDto;
+import com.sahayaSetu.dtos.VolunteerRequestResponseDto;
+import com.sahayaSetu.dtos.ContributionSummaryDto;
+import com.sahayaSetu.dtos.DonationContributionDto;
+import com.sahayaSetu.dtos.VolunteerContributionDto;
+import com.sahayaSetu.dtos.ResourceContributionDto;
 import com.sahayaSetu.entities.*;
 import com.sahayaSetu.entities.enums.RequestStatus;
 import com.sahayaSetu.entities.enums.VolunteerParticipationStatus;
@@ -11,10 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sahayaSetu.dtos.FundraiserRequestResponseDto;
-import com.sahayaSetu.dtos.ResourceRequestResponseDto;
-import com.sahayaSetu.dtos.VolunteerRequestResponseDto;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @Service
@@ -207,7 +212,7 @@ public class DonorService {
     }
 
     @Transactional(readOnly = true)
-    public com.sahayaSetu.dtos.ContributionSummaryDto getDonorContributions(Long donorId) {
+    public ContributionSummaryDto getDonorContributions(Long donorId) {
         if (donorId == null || donorId <= 0) {
             throw new RuntimeException("Invalid donor ID provided");
         }
@@ -215,13 +220,13 @@ public class DonorService {
         Donor donor = donorRepository.findById(donorId)
                 .orElseThrow(() -> new RuntimeException("Donor not found with ID: " + donorId));
 
-        com.sahayaSetu.dtos.ContributionSummaryDto summary = new com.sahayaSetu.dtos.ContributionSummaryDto();
+        ContributionSummaryDto summary = new ContributionSummaryDto();
         
         // Get donations (existing table)
         try {
             List<Donation> donations = donationRepository.findByDonor(donor);
             summary.setDonations(donations.stream().map(d -> {
-                com.sahayaSetu.dtos.DonationContributionDto dto = new com.sahayaSetu.dtos.DonationContributionDto();
+                DonationContributionDto dto = new DonationContributionDto();
                 dto.setAmount(d.getAmount());
                 dto.setFundraiserTitle(d.getFundraiserRequest().getTitle());
                 dto.setDonatedAt(d.getDonatedAt());
@@ -236,7 +241,7 @@ public class DonorService {
         try {
             List<VolunteerParticipation> volunteerParticipations = volunteerParticipationRepository.findByDonor(donor);
             summary.setVolunteerApplications(volunteerParticipations.stream().map(v -> {
-                com.sahayaSetu.dtos.VolunteerContributionDto dto = new com.sahayaSetu.dtos.VolunteerContributionDto();
+                VolunteerContributionDto dto = new VolunteerContributionDto();
                 dto.setRequestTitle(v.getVolunteerRequest().getTitle());
                 dto.setStatus(v.getStatus().toString());
                 dto.setAppliedAt(v.getJoinedAt());
@@ -252,7 +257,7 @@ public class DonorService {
             List<ResourceContribution> resourceContributions = resourceContributionRepository.findByDonor(donor);
             System.out.println("🔍 Found " + resourceContributions.size() + " resource contributions for donor " + donorId);
             summary.setResourceContributions(resourceContributions.stream().map(r -> {
-                com.sahayaSetu.dtos.ResourceContributionDto dto = new com.sahayaSetu.dtos.ResourceContributionDto();
+                ResourceContributionDto dto = new ResourceContributionDto();
                 dto.setQuantity(r.getQuantity());
                 dto.setResourceType(r.getResourceRequest().getResourceType());
                 dto.setRequestTitle(r.getResourceRequest().getTitle());

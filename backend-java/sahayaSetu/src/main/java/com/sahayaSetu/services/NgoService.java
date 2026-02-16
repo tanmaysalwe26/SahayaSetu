@@ -7,16 +7,18 @@ import com.sahayaSetu.entities.enums.RequestStatus;
 import com.sahayaSetu.entities.enums.RequestType;
 import com.sahayaSetu.repositories.NgoRepository;
 import com.sahayaSetu.repositories.RequestRepository;
+import com.sahayaSetu.repositories.DonationRepository;
+import com.sahayaSetu.repositories.VolunteerParticipationRepository;
+import com.sahayaSetu.repositories.ResourceContributionRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.stream.Collectors;
-import com.sahayaSetu.dtos.FundraiserRequestResponseDto;
-import com.sahayaSetu.dtos.ResourceRequestResponseDto;
-import com.sahayaSetu.dtos.VolunteerRequestResponseDto;
 
 @Service
 public class NgoService {
@@ -28,13 +30,13 @@ public class NgoService {
     private RequestRepository requestRepository;
 
     @Autowired
-    private com.sahayaSetu.repositories.DonationRepository donationRepository;
+    private DonationRepository donationRepository;
 
     @Autowired
-    private com.sahayaSetu.repositories.VolunteerParticipationRepository volunteerParticipationRepository;
+    private VolunteerParticipationRepository volunteerParticipationRepository;
 
     @Autowired
-    private com.sahayaSetu.repositories.ResourceContributionRepository resourceContributionRepository;
+    private ResourceContributionRepository resourceContributionRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -192,15 +194,15 @@ public class NgoService {
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new RuntimeException("Request not found"));
         
-        java.util.Map<String, Object> details = new java.util.HashMap<>();
+        Map<String, Object> details = new HashMap<>();
         
         if (request instanceof VolunteerRequest) {
             VolunteerRequest vr = (VolunteerRequest) request;
-            java.util.List<com.sahayaSetu.entities.VolunteerParticipation> participations = 
+            List<VolunteerParticipation> participations = 
                 volunteerParticipationRepository.findByVolunteerRequest(vr);
             
             details.put("applicants", participations.stream().map(p -> {
-                java.util.Map<String, Object> applicant = new java.util.HashMap<>();
+                Map<String, Object> applicant = new HashMap<>();
                 applicant.put("donorName", p.getDonor().getFullName());
                 applicant.put("donorEmail", p.getDonor().getUser().getEmail());
                 applicant.put("appliedAt", p.getJoinedAt());
@@ -210,11 +212,11 @@ public class NgoService {
             
         } else if (request instanceof ResourceRequest) {
             ResourceRequest rr = (ResourceRequest) request;
-            java.util.List<com.sahayaSetu.entities.ResourceContribution> contributions = 
+            List<ResourceContribution> contributions = 
                 resourceContributionRepository.findByResourceRequest(rr);
             
             details.put("contributors", contributions.stream().map(c -> {
-                java.util.Map<String, Object> contributor = new java.util.HashMap<>();
+                Map<String, Object> contributor = new HashMap<>();
                 contributor.put("donorName", c.getDonor().getFullName());
                 contributor.put("donorEmail", c.getDonor().getUser().getEmail());
                 contributor.put("quantity", c.getQuantity());
@@ -224,11 +226,11 @@ public class NgoService {
             
         } else if (request instanceof FundraiserRequest) {
             FundraiserRequest fr = (FundraiserRequest) request;
-            java.util.List<com.sahayaSetu.entities.Donation> donations = 
+            List<Donation> donations = 
                 donationRepository.findByFundraiserRequest(fr);
             
             details.put("donors", donations.stream().map(d -> {
-                java.util.Map<String, Object> donor = new java.util.HashMap<>();
+                Map<String, Object> donor = new HashMap<>();
                 donor.put("donorName", d.getDonor().getFullName());
                 donor.put("donorEmail", d.getDonor().getUser().getEmail());
                 donor.put("amount", d.getAmount());

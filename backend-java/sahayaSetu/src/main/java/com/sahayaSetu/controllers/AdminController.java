@@ -2,6 +2,7 @@ package com.sahayaSetu.controllers;
 
 import com.sahayaSetu.dtos.NgoResponseDto;
 import com.sahayaSetu.dtos.RequestResponseDto;
+import com.sahayaSetu.dtos.DonorResponseDto;
 import com.sahayaSetu.services.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class AdminController {
     }
 
     @GetMapping("/donors")
-    public ResponseEntity<List<com.sahayaSetu.dtos.DonorResponseDto>> getAllDonors() {
+    public ResponseEntity<List<DonorResponseDto>> getAllDonors() {
         return ResponseEntity.ok(adminService.getAllDonors());
     }
 
