@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +27,7 @@ import com.sahayaSetu.repositories.RequestRepository;
 
 @RestController
 @RequestMapping("/api/payment")
+@RequiredArgsConstructor
 public class PaymentController {
 
     @Value("${razorpay.key.id}")
@@ -35,17 +36,12 @@ public class PaymentController {
     @Value("${razorpay.key.secret}")
     private String keySecret;
 
-    @Autowired
-    private DonationRepository donationRepository;
-
-    @Autowired
-    private RequestRepository requestRepository;
-
-    @Autowired
-    private DonorRepository donorRepository;
+    private final DonationRepository donationRepository;
+    private final RequestRepository requestRepository;
+    private final DonorRepository donorRepository;
 
     @PostMapping("/create-order")
-    public ResponseEntity<String> createOrder(@RequestBody Map<String, Object> data)
+    public ResponseEntity<?> createOrder(@RequestBody Map<String, Object> data)
             throws RazorpayException {
         
         int amount = Integer.parseInt(data.get("amount").toString());
@@ -61,7 +57,7 @@ public class PaymentController {
     }
 
     @PostMapping("/success")
-    public ResponseEntity<String> updateDonation(@RequestBody Map<String, Object> data) {
+    public ResponseEntity<?> updateDonation(@RequestBody Map<String, Object> data) {
         try {
             Long requestId = Long.parseLong(data.get("requestId").toString());
             Long donorId = Long.parseLong(data.get("donorId").toString());

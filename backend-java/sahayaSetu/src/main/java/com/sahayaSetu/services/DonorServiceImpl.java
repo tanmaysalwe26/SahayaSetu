@@ -13,35 +13,24 @@ import com.sahayaSetu.entities.*;
 import com.sahayaSetu.entities.enums.RequestStatus;
 import com.sahayaSetu.entities.enums.VolunteerParticipationStatus;
 import com.sahayaSetu.repositories.*;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @Service
-public class DonorService {
+@Transactional
+@RequiredArgsConstructor
+public class DonorServiceImpl implements IDonorService {
 
-    @Autowired
-    private RequestRepository requestRepository;
-
-    @Autowired
-    private DonorRepository donorRepository;
-
-    @Autowired
-    private DonationRepository donationRepository;
-
-    @Autowired
-    private VolunteerParticipationRepository volunteerParticipationRepository;
-
-    @Autowired
-    private ResourceContributionRepository resourceContributionRepository;
-
-    @Autowired
-    private ModelMapper modelMapper;
+    private final RequestRepository requestRepository;
+    private final DonorRepository donorRepository;
+    private final DonationRepository donationRepository;
+    private final VolunteerParticipationRepository volunteerParticipationRepository;
+    private final ResourceContributionRepository resourceContributionRepository;
+    private final ModelMapper modelMapper;
 
     public List<RequestResponseDto> getAllOpenRequests() {
         // For now, return without donor-specific info since we don't have donorId in this method
@@ -100,7 +89,6 @@ public class DonorService {
         }
     }
 
-    @Transactional
     public void donateToFundraiser(Long donorId, Long requestId, DonationDto dto) {
         Donor donor = donorRepository.findById(donorId)
                 .orElseThrow(() -> new RuntimeException("Donor not found"));
@@ -137,7 +125,6 @@ public class DonorService {
         requestRepository.save(fundraiser);
     }
 
-    @Transactional
     public void applyForVolunteer(Long donorId, Long requestId) {
         Donor donor = donorRepository.findById(donorId)
                 .orElseThrow(() -> new RuntimeException("Donor not found"));
@@ -167,7 +154,6 @@ public class DonorService {
         volunteerParticipationRepository.save(participation);
     }
 
-    @Transactional
     public void fulfillResourceRequest(Long donorId, Long requestId, int quantity) {
         System.out.println("🔍 fulfillResourceRequest called with donorId: " + donorId + ", requestId: " + requestId + ", quantity: " + quantity);
         

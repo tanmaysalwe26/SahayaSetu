@@ -10,8 +10,8 @@ import com.sahayaSetu.repositories.RequestRepository;
 import com.sahayaSetu.repositories.DonationRepository;
 import com.sahayaSetu.repositories.VolunteerParticipationRepository;
 import com.sahayaSetu.repositories.ResourceContributionRepository;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,27 +21,17 @@ import java.util.HashMap;
 import java.util.stream.Collectors;
 
 @Service
-public class NgoService {
+@Transactional
+@RequiredArgsConstructor
+public class NgoServiceImpl implements INgoService {
 
-    @Autowired
-    private NgoRepository ngoRepository;
+    private final NgoRepository ngoRepository;
+    private final RequestRepository requestRepository;
+    private final DonationRepository donationRepository;
+    private final VolunteerParticipationRepository volunteerParticipationRepository;
+    private final ResourceContributionRepository resourceContributionRepository;
+    private final ModelMapper modelMapper;
 
-    @Autowired
-    private RequestRepository requestRepository;
-
-    @Autowired
-    private DonationRepository donationRepository;
-
-    @Autowired
-    private VolunteerParticipationRepository volunteerParticipationRepository;
-
-    @Autowired
-    private ResourceContributionRepository resourceContributionRepository;
-
-    @Autowired
-    private ModelMapper modelMapper;
-
-    @Transactional
     public void createResourceRequest(Long ngoId, ResourceRequestDto dto) {
         Ngo ngo = getNgoIfApproved(ngoId);
         ResourceRequest request = modelMapper.map(dto, ResourceRequest.class);
@@ -56,7 +46,6 @@ public class NgoService {
         requestRepository.save(request);
     }
 
-    @Transactional
     public void createVolunteerRequest(Long ngoId, VolunteerRequestDto dto) {
         Ngo ngo = getNgoIfApproved(ngoId);
         VolunteerRequest request = modelMapper.map(dto, VolunteerRequest.class);
@@ -66,7 +55,6 @@ public class NgoService {
         requestRepository.save(request);
     }
 
-    @Transactional
     public void createFundraiserRequest(Long ngoId, FundraiserRequestDto dto) {
         Ngo ngo = getNgoIfApproved(ngoId);
         FundraiserRequest request = modelMapper.map(dto, FundraiserRequest.class);
@@ -114,7 +102,6 @@ public class NgoService {
         return getNgoDonations(ngoId);
     }
 
-    @Transactional
     public void sendDonationResponse(DonationResponseRequestDto dto) {
         Donation donation = donationRepository.findById(dto.getDonationId())
                 .orElseThrow(() -> new RuntimeException("Donation not found"));
@@ -153,7 +140,6 @@ public class NgoService {
         }
     }
 
-    @Transactional
     public void updateNgoProfile(Long ngoId, NgoUpdateDto dto) {
         Ngo ngo = ngoRepository.findById(ngoId)
                 .orElseThrow(() -> new RuntimeException("NGO not found"));
@@ -172,7 +158,6 @@ public class NgoService {
         return ngo;
     }
 
-    @Transactional
     public void closeRequest(Long requestId, Long ngoId) {
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new RuntimeException("Request not found"));

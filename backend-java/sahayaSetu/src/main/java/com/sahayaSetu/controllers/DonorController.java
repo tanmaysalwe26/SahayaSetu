@@ -2,41 +2,36 @@ package com.sahayaSetu.controllers;
 
 import com.sahayaSetu.dtos.DonationDto;
 import com.sahayaSetu.dtos.ResourceFulfillmentDto;
-import com.sahayaSetu.dtos.RequestResponseDto;
-import com.sahayaSetu.dtos.FundraiserRequestResponseDto;
-
-import com.sahayaSetu.services.DonorService;
+import com.sahayaSetu.services.IDonorService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/donor")
+@RequiredArgsConstructor
 public class DonorController {
 
-    @Autowired
-    private DonorService donorService;
+    private final IDonorService donorService;
 
     @GetMapping("/requests")
-    public ResponseEntity<List<RequestResponseDto>> getAllOpenRequests() {
+    public ResponseEntity<?> getAllOpenRequests() {
         return ResponseEntity.ok(donorService.getAllOpenRequests());
     }
 
     @GetMapping("/requests-for-donor")
-    public ResponseEntity<List<RequestResponseDto>> getAllOpenRequestsForDonor(@RequestParam Long donorId) {
+    public ResponseEntity<?> getAllOpenRequestsForDonor(@RequestParam Long donorId) {
         return ResponseEntity.ok(donorService.getAllOpenRequestsForDonor(donorId));
     }
 
     @GetMapping("/fundraisers")
-    public ResponseEntity<List<FundraiserRequestResponseDto>> getOpenFundraisers() {
+    public ResponseEntity<?> getOpenFundraisers() {
         return ResponseEntity.ok(donorService.getOpenFundraisers());
     }
 
     @PostMapping("/requests/{requestId}/donate")
-    public ResponseEntity<String> donate(@PathVariable Long requestId,
+    public ResponseEntity<?> donate(@PathVariable Long requestId,
             @RequestParam Long donorId,
             @Valid @RequestBody DonationDto dto) {
         donorService.donateToFundraiser(donorId, requestId, dto);
@@ -44,14 +39,14 @@ public class DonorController {
     }
 
     @PostMapping("/requests/{requestId}/volunteer")
-    public ResponseEntity<String> volunteer(@PathVariable Long requestId,
+    public ResponseEntity<?> volunteer(@PathVariable Long requestId,
             @RequestParam Long donorId) {
         donorService.applyForVolunteer(donorId, requestId);
         return ResponseEntity.ok("Volunteer application submitted");
     }
 
     @PostMapping("/requests/{requestId}/fulfill-resource")
-    public ResponseEntity<String> fulfillResource(@PathVariable Long requestId,
+    public ResponseEntity<?> fulfillResource(@PathVariable Long requestId,
             @RequestParam Long donorId,
             @Valid @RequestBody ResourceFulfillmentDto dto) {
         donorService.fulfillResourceRequest(donorId, requestId, dto.getQuantity());

@@ -9,14 +9,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-// @Table(name = "items") // Changing name to avoid keyword reserved conflict if
-// any, but prompt said
-// REQUEST. Let's stick to 'request' but usually it's a keyword. Prompt says
-// REQUEST table.
-// Actually, 'REQUEST' is often a reserved keyword in SQL. I will use "requests"
-// as table name to be safe.
-// Re-reading prompt: "REQUEST".
-// I'll annotate @Table(name="requests") for safety.
 @Table(name = "requests")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Data

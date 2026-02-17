@@ -6,34 +6,24 @@ import com.sahayaSetu.entities.enums.NgoStatus;
 import com.sahayaSetu.entities.enums.Role;
 import com.sahayaSetu.repositories.*;
 import com.sahayaSetu.utils.JwtUtils;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class AuthService {
+@Transactional
+@RequiredArgsConstructor
+public class AuthServiceImpl implements IAuthService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final DonorRepository donorRepository;
+    private final NgoRepository ngoRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtils jwtUtils;
+    private final ModelMapper modelMapper;
 
-    @Autowired
-    private DonorRepository donorRepository;
-
-    @Autowired
-    private NgoRepository ngoRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JwtUtils jwtUtils;
-
-    @Autowired
-    private ModelMapper modelMapper;
-
-    @Transactional
     public AuthResponseDto registerDonor(DonorRegistrationDto dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
             throw new RuntimeException("Email already active");
@@ -53,7 +43,6 @@ public class AuthService {
         return new AuthResponseDto(token, user.getRole().name(), "Donor registered successfully");
     }
 
-    @Transactional
     public AuthResponseDto registerNgo(NgoRegistrationDto dto) {
         if (ngoRepository.existsByEmail(dto.getEmail())) {
             throw new RuntimeException("Email already registered");
@@ -110,7 +99,6 @@ public class AuthService {
         return new AuthResponseDto(token, Role.NGO.name(), "Login successful");
     }
 
-    @Transactional
     public AuthResponseDto registerAdmin(AdminRegistrationDto dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
             throw new RuntimeException("Email already active");

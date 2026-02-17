@@ -15,8 +15,7 @@ import com.sahayaSetu.entities.enums.NgoStatus;
 import com.sahayaSetu.repositories.NgoRepository;
 import com.sahayaSetu.repositories.RequestRepository;
 import com.sahayaSetu.repositories.DonorRepository;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,20 +24,31 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class AdminService {
+@Transactional
+@RequiredArgsConstructor
+public class AdminServiceImpl implements IAdminService {
 
-    @Autowired
-    private NgoRepository ngoRepository;
-
-    @Autowired
-    private RequestRepository requestRepository;
-
-    @Autowired
-    private ModelMapper modelMapper;
+    private final NgoRepository ngoRepository;
+    private final RequestRepository requestRepository;
+    private final DonorRepository donorRepository;
+    private final MailService emailService;
 
     public List<NgoResponseDto> getAllNgos() {
         return ngoRepository.findAll().stream()
-                .map(ngo -> modelMapper.map(ngo, NgoResponseDto.class))
+                .map(ngo -> {
+                    NgoResponseDto dto = new NgoResponseDto();
+                    dto.setNgoId(ngo.getNgoId());
+                    dto.setName(ngo.getName());
+                    dto.setEmail(ngo.getEmail());
+                    dto.setDarpanId(ngo.getDarpanId());
+                    dto.setContactPhone(ngo.getContactPhone());
+                    dto.setAddressLine1(ngo.getAddressLine1());
+                    dto.setCity(ngo.getCity());
+                    dto.setStatus(ngo.getStatus());
+                    dto.setApprovedAt(ngo.getApprovedAt());
+                    dto.setCreatedAt(ngo.getCreatedAt());
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -48,13 +58,16 @@ public class AdminService {
                 .collect(Collectors.toList());
     }
 
-    @Autowired
-    private DonorRepository donorRepository;
 
     public List<DonorResponseDto> getAllDonors() {
         return donorRepository.findAll().stream()
                 .map(donor -> {
-                    DonorResponseDto dto = modelMapper.map(donor, DonorResponseDto.class);
+                    DonorResponseDto dto = new DonorResponseDto();
+                    dto.setDonorId(donor.getDonorId());
+                    dto.setFullName(donor.getFullName());
+                    dto.setPhone(donor.getPhone());
+                    dto.setCity(donor.getCity());
+                    dto.setDateOfBirth(donor.getDateOfBirth());
                     dto.setEmail(donor.getUser().getEmail());
                     return dto;
                 })
@@ -64,34 +77,74 @@ public class AdminService {
     private RequestResponseDto mapToDto(Request request) {
         if (request instanceof VolunteerRequest) {
             VolunteerRequest vr = (VolunteerRequest) request;
-            VolunteerRequestResponseDto dto = modelMapper.map(vr, VolunteerRequestResponseDto.class);
+            VolunteerRequestResponseDto dto = new VolunteerRequestResponseDto();
+            dto.setRequestId(vr.getRequestId());
+            dto.setTitle(vr.getTitle());
             dto.setDescription(vr.getDescription());
             dto.setSkillsRequired(vr.getSkillsRequired());
             dto.setVolunteersRequired(vr.getVolunteersRequired());
+            dto.setStatus(vr.getStatus());
+            dto.setRequestType(vr.getRequestType());
+            dto.setCreatedAt(vr.getCreatedAt());
+            dto.setNgo(mapNgoToDto(vr.getNgo()));
             return dto;
         } else if (request instanceof ResourceRequest) {
             ResourceRequest rr = (ResourceRequest) request;
-            ResourceRequestResponseDto dto = modelMapper.map(rr, ResourceRequestResponseDto.class);
+            ResourceRequestResponseDto dto = new ResourceRequestResponseDto();
+            dto.setRequestId(rr.getRequestId());
+            dto.setTitle(rr.getTitle());
+            dto.setDescription(rr.getDescription());
             dto.setResourceType(rr.getResourceType());
             dto.setQuantityRequired(rr.getQuantityRequired());
             dto.setQuantityReceived(rr.getQuantityReceived());
+            dto.setStatus(rr.getStatus());
+            dto.setRequestType(rr.getRequestType());
+            dto.setCreatedAt(rr.getCreatedAt());
+            dto.setNgo(mapNgoToDto(rr.getNgo()));
             return dto;
         } else if (request instanceof FundraiserRequest) {
             FundraiserRequest fr = (FundraiserRequest) request;
-            FundraiserRequestResponseDto dto = modelMapper.map(fr, FundraiserRequestResponseDto.class);
+            FundraiserRequestResponseDto dto = new FundraiserRequestResponseDto();
+            dto.setRequestId(fr.getRequestId());
+            dto.setTitle(fr.getTitle());
+            dto.setDescription(fr.getDescription());
             dto.setTargetAmount(fr.getTargetAmount());
             dto.setCollectedAmount(fr.getCollectedAmount());
             dto.setDeadline(fr.getDeadline());
+            dto.setStatus(fr.getStatus());
+            dto.setRequestType(fr.getRequestType());
+            dto.setCreatedAt(fr.getCreatedAt());
+            dto.setNgo(mapNgoToDto(fr.getNgo()));
             return dto;
         } else {
-            return modelMapper.map(request, RequestResponseDto.class);
+            RequestResponseDto dto = new RequestResponseDto();
+            dto.setRequestId(request.getRequestId());
+            dto.setTitle(request.getTitle());
+            dto.setDescription(request.getDescription());
+            dto.setStatus(request.getStatus());
+            dto.setRequestType(request.getRequestType());
+            dto.setCreatedAt(request.getCreatedAt());
+            dto.setNgo(mapNgoToDto(request.getNgo()));
+            return dto;
         }
     }
 
-    @Autowired
-    private MailService emailService;
+    private NgoResponseDto mapNgoToDto(Ngo ngo) {
+        NgoResponseDto dto = new NgoResponseDto();
+        dto.setNgoId(ngo.getNgoId());
+        dto.setName(ngo.getName());
+        dto.setEmail(ngo.getEmail());
+        dto.setDarpanId(ngo.getDarpanId());
+        dto.setContactPhone(ngo.getContactPhone());
+        dto.setAddressLine1(ngo.getAddressLine1());
+        dto.setCity(ngo.getCity());
+        dto.setStatus(ngo.getStatus());
+        dto.setApprovedAt(ngo.getApprovedAt());
+        dto.setCreatedAt(ngo.getCreatedAt());
+        return dto;
+    }
 
-    @Transactional
+
     public void approveNgo(Long ngoId) {
         Ngo ngo = ngoRepository.findById(ngoId)
                 .orElseThrow(() -> new RuntimeException("NGO not found"));
@@ -107,7 +160,6 @@ public class AdminService {
         emailService.sendNgoApprovalMail(ngo.getEmail(), ngo.getName());
     }
 
-    @Transactional
     public void disapproveNgo(Long ngoId) {
         Ngo ngo = ngoRepository.findById(ngoId)
                 .orElseThrow(() -> new RuntimeException("NGO not found"));
@@ -122,7 +174,6 @@ public class AdminService {
         emailService.sendDisapprovalEmail(ngo.getEmail(), ngo.getName());
     }
 
-    @Transactional
     public void disableNgo(Long ngoId) {
         Ngo ngo = ngoRepository.findById(ngoId)
                 .orElseThrow(() -> new RuntimeException("NGO not found"));
@@ -137,7 +188,6 @@ public class AdminService {
         emailService.sendNgoDisableEmail(ngo.getEmail(), ngo.getName());
     }
 
-    @Transactional
     public void enableNgo(Long ngoId) {
         Ngo ngo = ngoRepository.findById(ngoId)
                 .orElseThrow(() -> new RuntimeException("NGO not found"));

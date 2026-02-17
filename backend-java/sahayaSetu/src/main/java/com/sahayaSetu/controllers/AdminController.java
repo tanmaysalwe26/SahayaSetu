@@ -1,58 +1,53 @@
 package com.sahayaSetu.controllers;
 
-import com.sahayaSetu.dtos.NgoResponseDto;
-import com.sahayaSetu.dtos.RequestResponseDto;
-import com.sahayaSetu.dtos.DonorResponseDto;
-import com.sahayaSetu.services.AdminService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.sahayaSetu.services.IAdminService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/admin")
+@RequiredArgsConstructor
 public class AdminController {
 
-    @Autowired
-    private AdminService adminService;
+    private final IAdminService adminService;
 
     @GetMapping("/ngos")
-    public ResponseEntity<List<NgoResponseDto>> getAllNgos() {
+    public ResponseEntity<?> getAllNgos() {
         return ResponseEntity.ok(adminService.getAllNgos());
     }
 
     @GetMapping("/requests")
-    public ResponseEntity<List<RequestResponseDto>> getAllRequests() {
+    public ResponseEntity<?> getAllRequests() {
         return ResponseEntity.ok(adminService.getAllRequests());
     }
 
     @GetMapping("/donors")
-    public ResponseEntity<List<DonorResponseDto>> getAllDonors() {
+    public ResponseEntity<?> getAllDonors() {
         return ResponseEntity.ok(adminService.getAllDonors());
     }
 
     @PutMapping("/ngos/{id}/approve")
-    public ResponseEntity<String> approveNgo(@PathVariable Long id) {
+    public ResponseEntity<?> approveNgo(@PathVariable Long id) {
         adminService.approveNgo(id);
         return ResponseEntity.ok("NGO approved successfully");
     }
 
     @PutMapping("/ngos/{id}/disapprove")
-    public ResponseEntity<String> disapproveNgo(@PathVariable Long id) {
+    public ResponseEntity<?> disapproveNgo(@PathVariable Long id) {
         adminService.disapproveNgo(id);
         return ResponseEntity.ok("NGO disapproved successfully");
     }
 
     @PutMapping("/ngos/{id}/disable")
-    public ResponseEntity<String> disableNgo(@PathVariable Long id) {
+    public ResponseEntity<?> disableNgo(@PathVariable Long id) {
         adminService.disableNgo(id);
         return ResponseEntity.ok("NGO disabled successfully");
     }
 
     @PutMapping("/ngos/{id}/enable")
-    public ResponseEntity<String> enableNgo(@PathVariable Long id) {
+    public ResponseEntity<?> enableNgo(@PathVariable Long id) {
         adminService.enableNgo(id);
         return ResponseEntity.ok("NGO enabled successfully");
     }
