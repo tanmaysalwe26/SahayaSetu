@@ -24,7 +24,7 @@ builder.Services.AddScoped<SahayaSetu.Services.IDonorService, SahayaSetu.Service
 builder.Services.AddScoped<SahayaSetu.Services.INgoService, SahayaSetu.Services.NgoService>();
 builder.Services.AddScoped<SahayaSetu.Services.IAdminService, SahayaSetu.Services.AdminService>();
 builder.Services.AddScoped<SahayaSetu.Services.IMailService, SahayaSetu.Services.MailService>();
-builder.Services.AddScoped<SahayaSetu.Helpers.JwtHelper>();
+builder.Services.AddSingleton<SahayaSetu.Helpers.JwtHelper>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
