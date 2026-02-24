@@ -24,7 +24,7 @@ namespace SahayaSetu.Services
                 NgoId = n.NgoId,
                 Name = n.Name,
                 Email = n.Email,
-                Phone = n.ContactPhone, // Mapping ContactPhone to Phone for DTO
+                Phone = n.ContactPhone,
                 Address = n.Address,
                 City = n.City,
                 Status = n.Status.ToString().ToUpper(),

@@ -58,7 +58,6 @@ public class AdminServiceImpl implements IAdminService {
                 .collect(Collectors.toList());
     }
 
-
     public List<DonorResponseDto> getAllDonors() {
         return donorRepository.findAll().stream()
                 .map(donor -> {
