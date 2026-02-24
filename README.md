@@ -1,178 +1,189 @@
-# SahayaSetu - NGO Management Platform
+# SahayaSetu
 
-A platform connecting donors with verified NGOs for transparent donations, fundraising, and volunteer coordination.
+Connecting donors with verified NGOs for transparent donations and volunteer coordination.
 
-## Features
+## What's Inside
 
-**For Donors:**
-- Browse verified NGOs and active fundraisers
-- Make secure donations via Razorpay
-- Contribute resources and volunteer for causes
-- Track donation history
+**Donors can:**
+- Browse verified NGOs and fundraisers
+- Donate securely via Razorpay
+- Volunteer for causes
+- Track their contributions
 
-**For NGOs:**
-- Register with DARPAN ID verification
+**NGOs can:**
+- Register with DARPAN ID
 - Create fundraising campaigns
-- Post resource and volunteer requests
-- Receive email notifications for donations
+- Post resource/volunteer needs
+- Get email notifications for donations
 
-**For Admins:**
+**Admins can:**
 - Approve/reject NGO registrations
-- Monitor platform activities
-- Manage users and NGOs
+- Monitor platform activity
+- Manage users
 
 ## Tech Stack
 
-**Frontend:** React 19, Vite, Bootstrap 5  
-**Backend:** Spring Boot 3.5, Java 17, Spring Security + JWT  
-**Database:** MySQL 8.0+  
-**Payment:** Razorpay integration  
-**Email:** Spring Mail with HTML templates
+- **Frontend:** React 19 + Vite + Bootstrap 5
+- **Backend:** Spring Boot 3.5 (Java 17) OR ASP.NET Core 8.0 (C# 12)
+- **Auth:** JWT with role-based access
+- **Database:** MySQL 8.0+
+- **Payments:** Razorpay
+- **Email:** SMTP notifications
 
-## Prerequisites
+## Getting Started
 
+You'll need:
 - Node.js 18+
 - MySQL 8.0+
-- Java 17+
-- Maven 3.8+
+- Java 17+ & Maven (for Java backend) OR .NET 8.0 SDK (for .NET backend)
 
-## Installation
+## Setup
 
-### 1. Database Setup
+### Database
 
 ```sql
 CREATE DATABASE sahayaSetuDemo;
 ```
 
-### 2. Backend Setup
+### Backend (pick one)
 
+**Java:**
 ```bash
 cd backend-java/sahayaSetu
-
-# Copy and configure environment file
 cp .env.example .env
-
-# Edit .env with:
-# - Database credentials (DB_URL, DB_USERNAME, DB_PASSWORD)
-# - JWT secret (JWT_SECRET)
-# - Email config (MAIL_USERNAME, MAIL_PASSWORD)
-# - Razorpay keys (RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET)
-
-# Build and run
+# Edit .env with your DB, JWT, email, and Razorpay credentials
 mvn clean install
 mvn spring-boot:run
 ```
 
-Backend runs on: `http://localhost:8080`
+**.NET:**
+```bash
+cd backend-dotnet/SahayaSetu
+# Edit appsettings.json with your configs
+dotnet restore
+dotnet run
+```
 
-### 3. Frontend Setup
+Backend will run on `localhost:8080` (Java) or `localhost:5000` (.NET)
+
+### Frontend
 
 ```bash
 cd frontend
-
-# Install dependencies
 npm install
-
-# Configure environment
 cp .env.example .env.local
 # Set VITE_API_URL=http://localhost:8080/api
-
-# Start development server
 npm run dev
 ```
 
-Frontend runs on: `http://localhost:5173`
+Frontend runs on `localhost:5173`
 
 ## Project Structure
 
 ```
 sahayasetu_final/
-├── frontend/                 # React application
+├── frontend/
 │   ├── src/
 │   │   ├── components/
 │   │   ├── pages/
 │   │   └── services/
 │   └── .env.example
-│
-└── backend-java/
-    └── sahayaSetu/           # Spring Boot application
-        ├── src/main/java/com/sahayaSetu/
-        │   ├── config/       # Security, JWT, CORS
-        │   ├── controllers/  # REST API endpoints
-        │   ├── services/     # Business logic (Interface + Impl)
-        │   ├── repositories/ # Data access layer
-        │   ├── entities/     # JPA entities
-        │   └── dtos/         # Data transfer objects
-        ├── src/main/resources/
-        │   ├── application.properties
-        │   └── templates/    # Email templates
-        ├── pom.xml
-        └── .env.example
+├── backend-java/sahayaSetu/
+│   ├── src/main/java/com/sahayaSetu/
+│   │   ├── config/
+│   │   ├── controllers/
+│   │   ├── services/
+│   │   ├── repositories/
+│   │   ├── entities/
+│   │   └── dtos/
+│   └── .env.example
+└── backend-dotnet/SahayaSetu/
+    ├── Controllers/
+    ├── Services/
+    ├── Repositories/
+    ├── Models/
+    ├── DTOs/
+    └── Middleware/
 ```
 
-## API Documentation
+## API Endpoints
 
-Swagger UI available at: `http://localhost:8080/swagger-ui.html`
+Swagger docs: `http://localhost:8080/swagger-ui.html`
 
-### Key Endpoints
-
-**Authentication:**
-- `POST /api/auth/register` - Register as donor
-- `POST /api/auth/register-ngo` - Register NGO
-- `POST /api/auth/login` - User login
+**Auth:**
+- `POST /api/auth/register` - Donor signup
+- `POST /api/auth/register-ngo` - NGO signup
+- `POST /api/auth/login` - Donor login
 - `POST /api/auth/login-ngo` - NGO login
 
-**Donor Operations:**
-- `GET /api/donor/fundraisers` - Browse active fundraisers
-- `POST /api/donor/requests/{id}/donate` - Make donation
-- `POST /api/donor/requests/{id}/volunteer` - Apply as volunteer
-- `GET /api/donor/contributions` - View contribution history
+**Donors:**
+- `GET /api/donor/fundraisers` - List fundraisers
+- `POST /api/donor/requests/{id}/donate` - Donate
+- `POST /api/donor/requests/{id}/volunteer` - Volunteer
+- `GET /api/donor/contributions` - Contribution history
 
-**NGO Operations:**
-- `POST /api/ngo/requests/fundraiser` - Create fundraiser
-- `POST /api/ngo/requests/resource` - Create resource request
-- `POST /api/ngo/requests/volunteer` - Create volunteer request
-- `GET /api/ngo/{id}/donations` - View received donations
+**NGOs:**
+- `POST /api/ngo/requests/fundraiser` - New fundraiser
+- `POST /api/ngo/requests/resource` - Request resources
+- `POST /api/ngo/requests/volunteer` - Request volunteers
+- `GET /api/ngo/{id}/donations` - View donations
 
-**Admin Operations:**
-- `GET /api/admin/ngos` - List all NGOs
+**Admin:**
+- `GET /api/admin/ngos` - All NGOs
 - `PUT /api/admin/ngos/{id}/approve` - Approve NGO
 - `PUT /api/admin/ngos/{id}/disapprove` - Reject NGO
 
-## Architecture Highlights
+## How It Works
 
-**Backend Design:**
-- Service layer with interface-implementation pattern
-- Constructor-based dependency injection
-- JWT authentication with role-based access control
-- DTO pattern for clean API contracts
+- REST API with service/repository layers
+- JWT auth with roles (DONOR, NGO, ADMIN)
+- BCrypt password hashing
 - Async email notifications
+- DTOs for clean API contracts
 
-**Security:**
-- BCrypt password encryption
-- JWT token authentication
-- Role-based authorization (DONOR, NGO, ADMIN)
-- Input validation
+## Config
 
-## Environment Variables
-
-**Backend (.env):**
-```properties
+**Java (.env):**
+```
 DB_URL=jdbc:mysql://localhost:3306/sahayaSetuDemo
 DB_USERNAME=root
 DB_PASSWORD=your_password
-JWT_SECRET=your_secret_key
+JWT_SECRET=your_secret
 MAIL_USERNAME=your_email@gmail.com
 MAIL_PASSWORD=your_app_password
 RAZORPAY_KEY_ID=your_key
 RAZORPAY_KEY_SECRET=your_secret
 ```
 
+**.NET (appsettings.json):**
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost;Database=sahayaSetuDemo;User=root;Password=your_password;"
+  },
+  "JwtSettings": {
+    "Secret": "your_secret",
+    "Issuer": "SahayaSetu",
+    "Audience": "SahayaSetuUsers"
+  },
+  "EmailSettings": {
+    "SmtpServer": "smtp.gmail.com",
+    "SmtpPort": 587,
+    "Username": "your_email@gmail.com",
+    "Password": "your_app_password"
+  },
+  "Razorpay": {
+    "KeyId": "your_key",
+    "KeySecret": "your_secret"
+  }
+}
+```
+
 **Frontend (.env.local):**
-```properties
+```
 VITE_API_URL=http://localhost:8080/api
 ```
 
-## License
+---
 
 CDAC Final Project
