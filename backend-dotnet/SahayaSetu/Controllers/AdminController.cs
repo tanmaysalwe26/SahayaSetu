@@ -39,37 +39,29 @@ namespace SahayaSetu.Controllers
         [HttpPut("ngos/{ngoId}/approve")]
         public async Task<IActionResult> ApproveNgo(int ngoId)
         {
-            try {
-                await _adminService.ApproveNgoAsync(ngoId);
-                return Ok("NGO approved successfully");
-            } catch (Exception ex) { return BadRequest(ex.Message); }
+            await _adminService.ApproveNgoAsync(ngoId);
+            return Ok("NGO approved successfully");
         }
 
         [HttpPut("ngos/{ngoId}/disable")]
         public async Task<IActionResult> DisableNgo(int ngoId)
         {
-            try {
-               await _adminService.DisableNgoAsync(ngoId);
-               return Ok("NGO disabled successfully");
-            } catch (Exception ex) { return BadRequest(ex.Message); }
+            await _adminService.DisableNgoAsync(ngoId);
+            return Ok("NGO disabled successfully");
         }
         
         [HttpPut("ngos/{ngoId}/disapprove")]
         public async Task<IActionResult> DisapproveNgo(int ngoId)
         {
-            try {
-               await _adminService.DisapproveNgoAsync(ngoId);
-               return Ok("NGO disapproved successfully");
-            } catch (Exception ex) { return BadRequest(ex.Message); }
+            await _adminService.DisapproveNgoAsync(ngoId);
+            return Ok("NGO disapproved successfully");
         }
         
         [HttpPut("ngos/{ngoId}/enable")]
         public async Task<IActionResult> EnableNgo(int ngoId)
         {
-            try {
-               await _adminService.EnableNgoAsync(ngoId);
-               return Ok("NGO enabled successfully");
-            } catch (Exception ex) { return BadRequest(ex.Message); }
+            await _adminService.EnableNgoAsync(ngoId);
+            return Ok("NGO enabled successfully");
         }
 
     }
